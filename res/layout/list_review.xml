@@ -1,0 +1,62 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bathroom_tiles"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".ListReview" >
+ <LinearLayout
+     android:layout_height="match_parent"
+     android:layout_width="match_parent"
+     android:orientation="vertical"
+     >
+    <TextView
+        android:id="@+id/displayName"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:textSize="30sp"
+       android:text="Text"
+       />
+
+    <TextView
+        android:id="@+id/displayAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:layout_gravity="center"
+        android:textSize="20sp"
+     android:text="Text"
+      />
+
+   
+        
+    <ListView
+        android:id="@+id/listView1"
+      
+         android:layout_width="310dp"
+        android:layout_height="0dp"
+        android:layout_weight="7"
+		
+       android:layout_centerHorizontal="true"    
+    >
+      <!-- 360dp width centers it but rating bar goes off page -->
+    </ListView>
+    
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:layout_height="0dp" 
+        android:layout_weight="1"
+        android:onClick="back"
+        android:text="Back to Map" />
+
+    </LinearLayout>
+</LinearLayout>
