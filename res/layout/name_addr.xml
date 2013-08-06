@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bathroom_tiles"
+    android:orientation="vertical" >
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="20"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/Address"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:textSize="20sp"
+        android:text="Address" />
+
+    <EditText
+        android:id="@+id/PutAddress"
+        android:layout_width="match_parent"
+       android:layout_height="0dp"
+        android:layout_weight="1"
+        android:ems="10" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+       android:layout_height="0dp"
+        android:layout_weight="1"
+        android:textSize="20sp"
+        android:text="Name" />
+
+    <EditText
+        android:id="@+id/PutName"
+        android:layout_width="match_parent"
+       android:layout_height="0dp"
+        android:layout_weight="1"
+        android:ems="10" />
+
+    <CheckBox
+        android:id="@+id/free"
+        android:layout_width="wrap_content"
+       android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Free" />
+
+    <CheckBox
+        android:id="@+id/handicapped"
+        android:layout_width="wrap_content"
+       android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_below="@+id/free"
+        android:text="Handicap accessible" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+       android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Cleanliness Rating: "
+        android:textSize="30px" />
+
+    <RatingBar
+        android:id="@+id/cleanrating"
+        android:layout_width="wrap_content"
+       android:layout_height="0dp"
+        android:layout_weight="1"
+        android:numStars="5"
+        android:max="5"
+       style="@style/toiletRatingBar"
+    />
+       
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+       android:layout_height="0dp"
+        android:layout_weight="1"
+        android:textSize="20sp"
+        android:text="Please write a short review:" />
+
+    <EditText
+        android:id="@+id/review"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:ems="10"
+        android:gravity="top"
+        android:inputType="textMultiLine"
+        android:maxLength="100"
+        android:maxLines="2" >
+
+        <requestFocus />
+    </EditText>
+   
+    </LinearLayout>
+   <LinearLayout 
+    android:orientation = "horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="2">
+        <Button
+        android:id="@+id/cancel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:onClick="Cancel"
+        android:text="Cancel" />
+       
+    <Button
+        android:id="@+id/save"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:onClick="save_location"
+        android:text="Save" />
+    
+
+</LinearLayout>
+
+
+</LinearLayout>
