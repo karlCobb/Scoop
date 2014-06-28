@@ -15,12 +15,13 @@ public static double geocoded_lat;
 public static double geocoded_lng;
 public static double curr_lat;
 public static double curr_lng;
-public static String curr_addr;	
-public static String geocoded_addr;
+public static String curr_addr = "";	
+public static String geocoded_addr = "";
 public static String addlocation_address;
 public static String addlocation_name;
 public static String addlocation_handicapped;
 public static String addlocation_free;
+public static boolean LOCKED = false;
 
 public void geocodeToCurrLat(){
 	curr_lat = geocoded_lat;

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/mirror_custom_info_small"
+
+>
+
+    
+    <TextView
+        android:id="@+id/getName"
+        android:layout_alignParentTop="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="10dp"
+        android:text="name" 
+        android:textSize="13sp"
+        />
+
+    <TextView
+        android:id="@+id/getAddress"
+        android:layout_below="@id/getName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="10dp"
+        android:minLines="2"
+        android:text="address" 
+        android:textSize="13sp" 
+        android:layout_weight="2"/>
+
+    <RatingBar
+        android:id="@+id/getClean"
+        android:layout_below="@id/getAddress"
+        style="@style/toiletRatingBarSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginLeft="15dp"
+        android:isIndicator="true"
+        android:numStars="5" />
+
+ <!--    
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="0dp"
+    android:layout_weight="2"
+    android:orientation="horizontal"
+    android:layout_marginLeft="40dp" 
+    android:layout_marginBottom="30dp"
+    >
+
+    <ImageView
+        android:id="@+id/handiImage"
+        android:layout_width="0dp"
+       	android:layout_height="wrap_content"
+       	android:layout_weight="1"
+        android:src="@drawable/handicapped"
+/>
+      <ImageView
+        android:id="@+id/freeImage"
+        android:layout_width="0dp"
+       	android:layout_height="wrap_content"
+       	android:layout_weight="1"
+        android:src="@drawable/money"
+            
+/>
+</LinearLayout>
+-->
+
+  
+
+
+
+</RelativeLayout>

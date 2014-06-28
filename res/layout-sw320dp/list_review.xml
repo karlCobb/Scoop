@@ -1,0 +1,87 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bathroom_tiles"
+     tools:context=".ListReview" >
+
+ <LinearLayout
+     android:layout_height="0dp"
+     android:layout_width="match_parent"
+     android:layout_weight="9"
+     android:orientation="vertical"
+     >
+    <TextView
+        android:id="@+id/displayName"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:textSize="18sp"
+        android:text="Text"
+       />
+
+    <TextView
+     android:id="@+id/displayAddress"
+     android:layout_width="wrap_content"
+     android:layout_height="0dp"
+     android:layout_weight="1"
+     android:maxLines="1"
+     android:layout_gravity="center"
+     android:textSize="18sp"
+     android:text="Text"
+      />
+
+<RelativeLayout 
+    android:layout_height="0dp"
+    android:layout_width="match_parent"
+    android:layout_weight="5"
+    >
+        
+    <ListView
+    android:id="@android:id/list"
+	android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    >
+    </ListView>
+</RelativeLayout>
+        
+      <!-- 360dp width centers it but rating bar goes off page -->
+
+
+
+
+<LinearLayout 
+     android:layout_height="0dp"
+     android:layout_width="match_parent"
+     android:orientation="horizontal"
+     android:layout_weight="1"
+    >
+        <Button
+        android:id="@+id/review"
+        android:background="@drawable/custom_button"
+        style="@style/ButtonText"
+		android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="match_parent" 
+        android:layout_weight="1"
+        android:onClick="review"
+        android:text="Review" />
+    
+    <Button
+        android:id="@+id/back"
+        android:background="@drawable/custom_button"
+        style="@style/ButtonText"
+        android:layout_width="0dp"
+        android:gravity="center"
+        android:layout_height="match_parent" 
+        android:onClick="back"
+        android:layout_weight="1"
+        android:text="Back" />
+    
+
+   </LinearLayout>
+  </LinearLayout>
+</LinearLayout>

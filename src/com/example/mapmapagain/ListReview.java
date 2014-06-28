@@ -53,7 +53,7 @@ import android.widget.Toast;
 import android.widget.SimpleCursorAdapter.ViewBinder;
 import android.widget.TextView;
 
-public class ListReview extends Activity {
+public class ListReview extends ListActivity {
 	String INTERNET = Variables.get_internet_address();
 	String address = null;
 	Context c = this;
@@ -75,7 +75,13 @@ public void back(View v){
 	finish();
 	
 }
-	
+
+public void review(View v){
+	if(address != null){
+	GetAddressInfo getaddressinfo = new GetAddressInfo();
+	getaddressinfo.execute(address);
+	}
+}
 
  
 	class setListView extends AsyncTask<String, Void, JSONArray>{
@@ -123,7 +129,7 @@ public void back(View v){
 	                  builder.append(line);
 	                }//end while
 	                JSONArray jsonarray = new JSONArray(builder.toString());
-	         
+	                
 	              
 	                return jsonarray;
 	            }//end if
@@ -152,8 +158,11 @@ public void back(View v){
 				JSONObject json = null;
 					try {
 					json = result.getJSONObject(i);
+					Log.i("JSON string listReview", json.toString());
 					l.setName(json.getString("name"));
 					//l.setAddress(json.getString("address"));
+					l.setHandicapped(Boolean.getBoolean(json.getString("handicapped")));
+					l.setPub(Boolean.getBoolean(json.getString("free")));
 					l.setReview(json.getString("reviews"));
 					l.setClean(Float.parseFloat(json.getString("ratings")));
 					location_array.add(l);
@@ -170,13 +179,12 @@ public void back(View v){
 				TextView address_tv = (TextView) findViewById(R.id.displayAddress);
 				
 				Locations l = location_array.get(0);
+				Log.i("listreview", l.name.toString() + " " + address);
 				name_tv.setText(l.getName());
 				address_tv.setText(address);
 				ListView listview = (ListView) findViewById(android.R.id.list);
 				MyArrayAdapter arrayadapter = new MyArrayAdapter(getApplicationContext(), R.layout.review_info, location_array);
 				listview.setAdapter(arrayadapter);
-				
-				
 				
 				listview.setOnItemClickListener(new OnItemClickListener() {
 			       public void onItemClick(AdapterView<?> parent, View view,
@@ -206,7 +214,110 @@ public void back(View v){
 		
 		
 	}
+	/*
+	 * Get Address Info is a copy of check address exists -- If the address exists fills in the address section of the review form
+	 * Should it fill in the name too?  People might have different names for same address.
+	 * An address may also have many places in same building. 
+	 */
 
+
+	class GetAddressInfo extends AsyncTask<String, Void, JSONObject>{
+
+		
+		
+		@Override
+		protected JSONObject doInBackground(String... params) {
+			String INTERNET = Variables.get_internet_address();
+			if(params[0] == null)
+			{/*If blank
+			*tell user address is blank.  Or tell user address doesn't exist. Then exit
+		*/
+				Log.i("checkaddressis blank", "blank");
+				}
+				HttpClient client = new DefaultHttpClient();
+			
+		        String url = INTERNET + "/address_exist.php?address=" + URLEncoder.encode(params[0]);
+				HttpGet httpGet =  new HttpGet(url);
+		        StringBuilder builder = new StringBuilder();
+		        org.apache.http.HttpResponse response = null;
+				try {
+					response = client.execute(httpGet);
+				} catch (ClientProtocolException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+		        
+		      
+		        try {
+		                
+		                StatusLine statusLine = response.getStatusLine();
+		                int statusCode = statusLine.getStatusCode();
+		                if (statusCode == 200) {
+		                    HttpEntity entity = response.getEntity();
+		                    InputStream content = entity.getContent();
+		                    BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+		                    String line;
+		                    while ((line = reader.readLine()) != null)
+		                    {
+		                      builder.append(line);
+		                    }//end while
+		                    JSONArray jsonarray = new JSONArray(builder.toString());
+		                    JSONObject jsonobject = jsonarray.getJSONObject(0);
+		                       if(jsonobject.getString("success").compareTo("0") == 0)
+		                       {
+		                    	   
+		                    	   jsonobject.put("address", params[0]);
+		                       }
+		                       
+		                    
+
+		               
+		                
+		                       return jsonobject;
+		                }//end if
+		    	        
+		        		else {
+		        	                      
+		        	               }}catch (Exception e){
+		        	                   Log.e("log_tag", "Error in http connection" +e.getMessage());
+		        	               }//end try catch
+	return null;
+		        		
+		        		}//end function
+	@Override
+	protected void onPostExecute(JSONObject bathroom) {
+		// TODO Auto-generated method stub
+		super.onPostExecute(bathroom);
+		Intent i = new Intent(getApplicationContext(), AddLocation.class);
+		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		  try {
+	    if(bathroom.has("name") == false){
+	     i.putExtra("address", bathroom.getString("address"));
+	 	 i.putExtra("name", "name");
+	     i.putExtra("handicapped", "handicapped");
+	     i.putExtra("free", "free");
+	    }
+	    else{
+	    	i.putExtra("address", bathroom.getString("address"));
+	    	i.putExtra("name", bathroom.getString("name"));
+	    	i.putExtra("handicapped", bathroom.getString("handicapped"));
+	    	i.putExtra("free", bathroom.getString("free"));
+	    	}
+	    startActivity(i);
+	    
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		
+		
+	}
+
+
+  }	
 
 	
 }

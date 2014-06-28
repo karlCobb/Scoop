@@ -4,20 +4,17 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true"
+        android:xlargeScreens="true" />
 
-    <supports-screens android:resizeable="true"
-                      android:smallScreens="true"
-                      android:normalScreens="true"
-                      android:largeScreens="true"
-                      android:xlargeScreens="true"
-                      android:anyDensity="true"/>
-
-    
-    
     <uses-sdk
         android:minSdkVersion="11"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="18" />
 
     <permission
         android:name="com.example.mapmapagain.permission.MAPS_RECEIVE"
@@ -42,33 +39,37 @@
     <application
         android:allowBackup="true"
         android:debuggable="true"
-        android:icon="@drawable/toilet"
-        android:label="The Scoop"
+        android:icon="@drawable/toilet_large"
+        android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
-        <!--  <uses-library android:name="com.google.android.maps" /> -->
+        <!-- <uses-library android:name="com.google.android.maps" /> -->
         <!-- Add Google Map Library -->
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCxztmSATp_rKzuYm4lF9k6Lvvirq5s1IM"
-            
-            />
-            <!-- android:value="AIzaSyAf2cZCVGCTXp57AGD3tj8OlhjDjSo4HoY"  -->
- 
+            android:value="AIzaSyAf2cZCVGCTXp57AGD3tj8OlhjDjSo4HoY" />
+        <!-- android:value="AIzaSyCxztmSATp_rKzuYm4lF9k6Lvvirq5s1IM" -->
+
         <activity
             android:name="com.example.mapmapagain.MainActivity"
-            android:label="@string/app_name" >
-            <intent-filter>
+            android:label="@string/app_name" 
+            android:screenOrientation="portrait"
+            >
+        </activity>
+        <activity android:name="com.example.mapmapagain.AddLocation" />
+        <activity android:name="com.example.mapmapagain.ListReview" />
+        <activity android:name="com.example.mapmapagain.Preferences" />
+        <activity
+            android:name="com.example.mapmapagain.SplashScreen"
+            android:label="@string/app_name" 
+            android:screenOrientation="portrait">
+                 <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.mapmapagain.AddLocation" />
-        <activity android:name="com.example.mapmapagain.ListReview" />
-      
-      
     </application>
 
 </manifest>

@@ -8,6 +8,12 @@
 package com.example.mapmapagain;
 
 public final class R {
+    public static final class array {
+        public static final int radiusArray=0x7f070000;
+        public static final int radiusValues=0x7f070001;
+        public static final int ratingArray=0x7f070002;
+        public static final int ratingValues=0x7f070003;
+    }
     public static final class attr {
         /** <p>Must be a floating point value, such as "<code>1.2</code>".
 <p>This may also be a reference to a resource (in the form
@@ -128,22 +134,6 @@ containing a value of this type.
          */
         public static final int zOrderOnTop=0x7f01000d;
     }
-    public static final class color {
-        public static final int common_action_bar_splitter=0x7f040009;
-        /**  Sign-in Button Colors 
-         */
-        public static final int common_signin_btn_dark_text_default=0x7f040000;
-        public static final int common_signin_btn_dark_text_disabled=0x7f040002;
-        public static final int common_signin_btn_dark_text_focused=0x7f040003;
-        public static final int common_signin_btn_dark_text_pressed=0x7f040001;
-        public static final int common_signin_btn_default_background=0x7f040008;
-        public static final int common_signin_btn_light_text_default=0x7f040004;
-        public static final int common_signin_btn_light_text_disabled=0x7f040006;
-        public static final int common_signin_btn_light_text_focused=0x7f040007;
-        public static final int common_signin_btn_light_text_pressed=0x7f040005;
-        public static final int common_signin_btn_text_dark=0x7f04000a;
-        public static final int common_signin_btn_text_light=0x7f04000b;
-    }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
  75dp centers it 
@@ -152,137 +142,128 @@ containing a value of this type.
          screen margins) for sw720dp devices (e.g. 10" tablets) in landscape here.
     
          */
-        public static final int activity_horizontal_margin=0x7f070000;
-        public static final int activity_vertical_margin=0x7f070001;
+        public static final int activity_horizontal_margin=0x7f080000;
+        public static final int activity_vertical_margin=0x7f080001;
     }
     public static final class drawable {
         public static final int bathroom_tiles=0x7f020000;
-        public static final int common_signin_btn_icon_dark=0x7f020001;
-        public static final int common_signin_btn_icon_disabled_dark=0x7f020002;
-        public static final int common_signin_btn_icon_disabled_focus_dark=0x7f020003;
-        public static final int common_signin_btn_icon_disabled_focus_light=0x7f020004;
-        public static final int common_signin_btn_icon_disabled_light=0x7f020005;
-        public static final int common_signin_btn_icon_focus_dark=0x7f020006;
-        public static final int common_signin_btn_icon_focus_light=0x7f020007;
-        public static final int common_signin_btn_icon_light=0x7f020008;
-        public static final int common_signin_btn_icon_normal_dark=0x7f020009;
-        public static final int common_signin_btn_icon_normal_light=0x7f02000a;
-        public static final int common_signin_btn_icon_pressed_dark=0x7f02000b;
-        public static final int common_signin_btn_icon_pressed_light=0x7f02000c;
-        public static final int common_signin_btn_text_dark=0x7f02000d;
-        public static final int common_signin_btn_text_disabled_dark=0x7f02000e;
-        public static final int common_signin_btn_text_disabled_focus_dark=0x7f02000f;
-        public static final int common_signin_btn_text_disabled_focus_light=0x7f020010;
-        public static final int common_signin_btn_text_disabled_light=0x7f020011;
-        public static final int common_signin_btn_text_focus_dark=0x7f020012;
-        public static final int common_signin_btn_text_focus_light=0x7f020013;
-        public static final int common_signin_btn_text_light=0x7f020014;
-        public static final int common_signin_btn_text_normal_dark=0x7f020015;
-        public static final int common_signin_btn_text_normal_light=0x7f020016;
-        public static final int common_signin_btn_text_pressed_dark=0x7f020017;
-        public static final int common_signin_btn_text_pressed_light=0x7f020018;
-        public static final int empty=0x7f020019;
-        public static final int empty_roll=0x7f02001a;
-        public static final int filled=0x7f02001b;
-        public static final int handicapped=0x7f02001c;
-        public static final int ic_launcher=0x7f02001d;
-        public static final int mirror=0x7f02001e;
-        public static final int mirror_custom_info=0x7f02001f;
-        public static final int mirror_reviews=0x7f020020;
-        public static final int mirrorbig=0x7f020021;
-        public static final int money=0x7f020022;
-        public static final int nomoney=0x7f020023;
-        public static final int not_handicapped=0x7f020024;
-        public static final int rating_paper=0x7f020025;
-        public static final int ratingstars=0x7f020026;
-        public static final int toilet=0x7f020027;
-        public static final int unfilled=0x7f020028;
+        public static final int button_default=0x7f020001;
+        public static final int button_focused=0x7f020002;
+        public static final int button_pressed=0x7f020003;
+        public static final int custom_button=0x7f020004;
+        public static final int empty=0x7f020005;
+        public static final int empty_roll=0x7f020006;
+        public static final int empty_roll_small=0x7f020007;
+        public static final int empty_small=0x7f020008;
+        public static final int filled=0x7f020009;
+        public static final int filled_small=0x7f02000a;
+        public static final int full_roll_small=0x7f02000b;
+        public static final int handicapped=0x7f02000c;
+        public static final int handicapped_small=0x7f02000d;
+        public static final int ic_launcher=0x7f02000e;
+        public static final int mirror=0x7f02000f;
+        public static final int mirror_custom_info=0x7f020010;
+        public static final int mirror_custom_info_small=0x7f020011;
+        public static final int mirror_reviews=0x7f020012;
+        public static final int mirrorbig=0x7f020013;
+        public static final int money=0x7f020014;
+        public static final int money_small=0x7f020015;
+        public static final int nohandicapped_small=0x7f020016;
+        public static final int nomoney=0x7f020017;
+        public static final int nomoney_small=0x7f020018;
+        public static final int not_handicapped=0x7f020019;
+        public static final int rating_paper=0x7f02001a;
+        public static final int ratingstars=0x7f02001b;
+        public static final int ratingstars_small=0x7f02001c;
+        public static final int scoop_image=0x7f02001d;
+        public static final int toilet=0x7f02001e;
+        public static final int toilet_large=0x7f02001f;
+        public static final int unfilled=0x7f020020;
     }
     public static final class id {
-        public static final int Add=0x7f05000e;
-        public static final int Address=0x7f05000d;
-        public static final int GPS=0x7f050009;
-        public static final int PutAddress=0x7f05001f;
-        public static final int PutName=0x7f050020;
-        public static final int action_settings=0x7f050029;
+        public static final int Add=0x7f050010;
+        public static final int Address=0x7f05000f;
+        public static final int GPS=0x7f050008;
+        public static final int PutAddress=0x7f050022;
+        public static final int PutName=0x7f050023;
+        public static final int action_settings=0x7f05002d;
+        public static final int back=0x7f050021;
         public static final int button1=0x7f050007;
         public static final int button2=0x7f050006;
-        public static final int cancel=0x7f050025;
-        public static final int clean=0x7f050013;
-        public static final int cleanrating=0x7f050022;
-        public static final int displayAddress=0x7f05001d;
-        public static final int displayName=0x7f05001c;
-        public static final int displayReview=0x7f050027;
-        public static final int editAddress=0x7f05000c;
-        public static final int editName=0x7f05000a;
-        public static final int free=0x7f050010;
-        public static final int freeImage=0x7f05001b;
-        public static final int getAddress=0x7f050018;
-        public static final int getClean=0x7f050019;
-        public static final int getName=0x7f050017;
-        public static final int handiImage=0x7f05001a;
-        public static final int handicapped=0x7f050014;
+        public static final int cancel=0x7f050028;
+        public static final int clean=0x7f050015;
+        public static final int cleanrating=0x7f050025;
+        public static final int counter=0x7f050027;
+        public static final int displayAddress=0x7f05001f;
+        public static final int displayName=0x7f05001e;
+        public static final int displayReview=0x7f05002a;
+        public static final int editAddress=0x7f05000e;
+        public static final int editName=0x7f05000c;
+        public static final int exit=0x7f05002e;
+        public static final int free=0x7f050012;
+        public static final int freeImage=0x7f05001d;
+        public static final int getAddress=0x7f05001a;
+        public static final int getClean=0x7f05001b;
+        public static final int getName=0x7f050019;
+        public static final int handiImage=0x7f05001c;
+        public static final int handicapped=0x7f050016;
+        public static final int handicappedImage=0x7f05002c;
         public static final int hybrid=0x7f050004;
-        public static final int isitFree=0x7f05000f;
-        public static final int isitclean=0x7f050011;
-        public static final int isithandicapped=0x7f050012;
-        public static final int listView1=0x7f05001e;
+        public static final int isitFree=0x7f050011;
+        public static final int isitclean=0x7f050013;
+        public static final int isithandicapped=0x7f050014;
         public static final int map=0x7f050005;
-        public static final int name=0x7f05000b;
+        public static final int name=0x7f05000d;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
-        public static final int preferences=0x7f050008;
-        public static final int ratingReview=0x7f050028;
-        public static final int review=0x7f050024;
+        public static final int preferences=0x7f050009;
+        public static final int prefs=0x7f05002f;
+        public static final int ratingReview=0x7f05002b;
+        public static final int review=0x7f050020;
         public static final int satellite=0x7f050002;
-        public static final int save=0x7f050026;
-        public static final int searchAddress=0x7f050015;
+        public static final int save=0x7f050029;
+        public static final int scoopImage=0x7f05000a;
+        public static final int searchAddress=0x7f050017;
         public static final int terrain=0x7f050003;
-        public static final int textView1=0x7f050016;
-        public static final int textView2=0x7f050023;
-        public static final int textView4=0x7f050021;
+        public static final int textView1=0x7f050018;
+        public static final int textView2=0x7f050026;
+        public static final int textView4=0x7f050024;
+        public static final int toilet=0x7f05000b;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
-        public static final int add_location=0x7f030001;
-        public static final int custom_alert_dialog=0x7f030002;
-        public static final int custom_info_window=0x7f030003;
-        public static final int dimens=0x7f030004;
-        public static final int list_review=0x7f030005;
-        public static final int name_addr=0x7f030006;
-        public static final int review_info=0x7f030007;
+        public static final int activity_splash_screen=0x7f030001;
+        public static final int add_location=0x7f030002;
+        public static final int connect_network=0x7f030003;
+        public static final int custom_alert_dialog=0x7f030004;
+        public static final int custom_info_window=0x7f030005;
+        public static final int dimens=0x7f030006;
+        public static final int list_review=0x7f030007;
+        public static final int name_addr=0x7f030008;
+        public static final int review_info=0x7f030009;
     }
     public static final class menu {
-        public static final int list_review=0x7f090000;
-        public static final int listreview=0x7f090001;
-        public static final int main=0x7f090002;
+        public static final int list_review=0x7f0a0000;
+        public static final int listreview=0x7f0a0001;
+        public static final int main=0x7f0a0002;
+        public static final int mainmenu=0x7f0a0003;
+        public static final int splash_screen=0x7f0a0004;
     }
     public static final class string {
-        public static final int action_settings=0x7f060016;
-        public static final int app_name=0x7f060015;
-        /**   Title for notification shown when GooglePlayServices needs to be
-        enabled for a application to work. [CHAR LIMIT=70] 
+        public static final int AddCurrentLocation=0x7f060018;
+        public static final int FindCurrentLocation=0x7f060019;
+        public static final int SetLocation=0x7f060017;
+        public static final int action_settings=0x7f060012;
+        public static final int app_name=0x7f060011;
+        /**   Title for notification shown when GooglePlayServices is unavailable [CHAR LIMIT=70] 
          */
-        public static final int auth_client_needs_enabling_title=0x7f060010;
-        /**   Title for notification shown when GooglePlayServices needs to be
-        installed for a application to work. [CHAR LIMIT=70] 
-         */
-        public static final int auth_client_needs_installation_title=0x7f060011;
-        /**   Title for notification shown when GooglePlayServices needs to be
-        udpated for a application to work. [CHAR LIMIT=70] 
-         */
-        public static final int auth_client_needs_update_title=0x7f060012;
+        public static final int auth_client_availability_notification_title=0x7f06000e;
         /**   Title for notification shown when GooglePlayServices is unavailable [CHAR LIMIT=42] 
          */
-        public static final int auth_client_play_services_err_notification_msg=0x7f060013;
+        public static final int auth_client_play_services_err_notification_msg=0x7f06000f;
         /**   Requested by string saying which app requested the notification. [CHAR LIMIT=42] 
          */
-        public static final int auth_client_requested_by_msg=0x7f060014;
-        /**   Title for notification shown when a bad version of GooglePlayServices
-        has been installed and needs correction for an application to work.
-        [CHAR LIMIT=70] 
-         */
-        public static final int auth_client_using_bad_version_title=0x7f06000f;
+        public static final int auth_client_requested_by_msg=0x7f060010;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -332,15 +313,14 @@ containing a value of this type.
         Google Play services (from Play Store) [CHAR LIMIT=40] 
          */
         public static final int common_google_play_services_update_title=0x7f060007;
-        /**  Sign-in button text [CHAR LIMIT=15] 
+        /**  Long form sign-in button text. This is the placeholder text, used if we can't
+        find the service-side assets. [CHAR LIMIT=25] 
          */
-        public static final int common_signin_button_text=0x7f06000d;
-        /**  Long form sign-in button text [CHAR LIMIT=30] 
-         */
-        public static final int common_signin_button_text_long=0x7f06000e;
-        public static final int hello_world=0x7f060017;
-        public static final int title_activity_list_review=0x7f060019;
-        public static final int title_activity_listreview=0x7f060018;
+        public static final int common_signin_button_text_long=0x7f06000d;
+        public static final int hello_world=0x7f060013;
+        public static final int title_activity_list_review=0x7f060015;
+        public static final int title_activity_listreview=0x7f060014;
+        public static final int title_activity_splash_screen=0x7f060016;
     }
     public static final class style {
         /** 
@@ -364,12 +344,18 @@ containing a value of this type.
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f080000;
+        public static final int AppBaseTheme=0x7f090000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f080001;
-        public static final int toiletRatingBar=0x7f080002;
+        public static final int AppTheme=0x7f090001;
+        public static final int ButtonText=0x7f090004;
+        public static final int ButtonText_Medium=0x7f090005;
+        public static final int toiletRatingBar=0x7f090002;
+        public static final int toiletRatingBarSmall=0x7f090003;
+    }
+    public static final class xml {
+        public static final int preferences=0x7f040000;
     }
     public static final class styleable {
         /** Attributes that can be used with a MapAttrs.
@@ -425,7 +411,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:cameraBearing
+          @attr name com.example.mapmapagain:cameraBearing
         */
         public static final int MapAttrs_cameraBearing = 1;
         /**
@@ -439,7 +425,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:cameraTargetLat
+          @attr name com.example.mapmapagain:cameraTargetLat
         */
         public static final int MapAttrs_cameraTargetLat = 2;
         /**
@@ -453,7 +439,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:cameraTargetLng
+          @attr name com.example.mapmapagain:cameraTargetLng
         */
         public static final int MapAttrs_cameraTargetLng = 3;
         /**
@@ -467,7 +453,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:cameraTilt
+          @attr name com.example.mapmapagain:cameraTilt
         */
         public static final int MapAttrs_cameraTilt = 4;
         /**
@@ -481,7 +467,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:cameraZoom
+          @attr name com.example.mapmapagain:cameraZoom
         */
         public static final int MapAttrs_cameraZoom = 5;
         /**
@@ -501,7 +487,7 @@ containing a value of this type.
 <tr><td><code>terrain</code></td><td>3</td><td></td></tr>
 <tr><td><code>hybrid</code></td><td>4</td><td></td></tr>
 </table>
-          @attr name android:mapType
+          @attr name com.example.mapmapagain:mapType
         */
         public static final int MapAttrs_mapType = 0;
         /**
@@ -515,7 +501,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:uiCompass
+          @attr name com.example.mapmapagain:uiCompass
         */
         public static final int MapAttrs_uiCompass = 6;
         /**
@@ -529,7 +515,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:uiRotateGestures
+          @attr name com.example.mapmapagain:uiRotateGestures
         */
         public static final int MapAttrs_uiRotateGestures = 7;
         /**
@@ -543,7 +529,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:uiScrollGestures
+          @attr name com.example.mapmapagain:uiScrollGestures
         */
         public static final int MapAttrs_uiScrollGestures = 8;
         /**
@@ -557,7 +543,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:uiTiltGestures
+          @attr name com.example.mapmapagain:uiTiltGestures
         */
         public static final int MapAttrs_uiTiltGestures = 9;
         /**
@@ -571,7 +557,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:uiZoomControls
+          @attr name com.example.mapmapagain:uiZoomControls
         */
         public static final int MapAttrs_uiZoomControls = 10;
         /**
@@ -585,7 +571,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:uiZoomGestures
+          @attr name com.example.mapmapagain:uiZoomGestures
         */
         public static final int MapAttrs_uiZoomGestures = 11;
         /**
@@ -599,7 +585,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:useViewLifecycle
+          @attr name com.example.mapmapagain:useViewLifecycle
         */
         public static final int MapAttrs_useViewLifecycle = 12;
         /**
@@ -613,7 +599,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:zOrderOnTop
+          @attr name com.example.mapmapagain:zOrderOnTop
         */
         public static final int MapAttrs_zOrderOnTop = 13;
     };

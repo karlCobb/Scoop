@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.android.gms.common.data.Freezable;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface.OnClickListener;
@@ -16,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
@@ -43,6 +46,8 @@ public class MyArrayAdapter extends ArrayAdapter<Locations>{
 	  static class ViewHolder {
 	    public TextView text;
 	    public RatingBar ratingbar;
+	    public ImageView handicappedimage;
+	    public ImageView freeImage;
 	  }
 
 
@@ -64,6 +69,10 @@ public class MyArrayAdapter extends ArrayAdapter<Locations>{
       rowView = inflater.inflate(R.layout.review_info, null);
       viewHolder.text = (TextView) rowView.findViewById(R.id.displayReview);
       viewHolder.ratingbar = (RatingBar) rowView.findViewById(R.id.ratingReview);
+      viewHolder.handicappedimage = (ImageView) rowView.findViewById(R.id.handicappedImage);
+      viewHolder.freeImage = (ImageView) rowView.findViewById(R.id.freeImage);
+      
+      
       rowView.setTag(viewHolder); 
     }
     else
@@ -71,9 +80,27 @@ public class MyArrayAdapter extends ArrayAdapter<Locations>{
         viewHolder = (ViewHolder) rowView.getTag();
     }
  
+    if(l.getReview().isEmpty()){
+    	viewHolder.text.setText("No review was left.");
+  }else{
     viewHolder.text.setText(l.getReview());
+  }
     viewHolder.ratingbar.setRating(l.getClean());
-  
+	Log.i("ArrayAdapter handicapped", String.valueOf(l.getHandicapped()));
+    if(l.getHandicapped() == true){
+    	Log.i("True handicapped", String.valueOf(l.getHandicapped()));
+    	viewHolder.handicappedimage.setImageResource(R.drawable.handicapped_small);
+    }else{
+    	Log.i("False handicapped", String.valueOf(l.getHandicapped()));
+    	viewHolder.handicappedimage.setImageResource(R.drawable.not_handicapped);
+    }
+    if(l.getPub() == true){
+    	viewHolder.freeImage.setImageResource(R.drawable.money_small);
+    }else{
+    	viewHolder.freeImage.setImageResource(R.drawable.nomoney);
+    }
+    
+    Log.i("review adapter", l.getReview());
     
     return rowView;
   }
@@ -81,6 +108,14 @@ public class MyArrayAdapter extends ArrayAdapter<Locations>{
 
 
 } 
+
+
+
+
+
+
+
+
 
 
 

@@ -45,9 +45,11 @@ import org.json.JSONTokener;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.json.JsonHttpParser;
 import com.google.api.client.util.Key;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
@@ -79,6 +81,8 @@ import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.Uri.Builder;
 import android.os.AsyncTask;
@@ -130,75 +134,55 @@ public class MainActivity extends Activity{
 	 * Variables for methods
 	 */
 	final Context c = this;
-	MarkerPlaces mp; 
+	MarkerPlaces mp;
 	protected GoogleMap map;
 	LatlngDbConversion latlngdb = new LatlngDbConversion();
+	
 	//used to prevent adding the same location twice by same user
 	boolean checked_address;
 	boolean checked_gps;
 	boolean checked_location;
+	
 	//for address and gps
 	boolean isNetworkEnabled = false;
 	boolean isGPSEnabled = false;
+	boolean internetConnectivity = false;
 	
+	//to stop async task from starting two instances
+
 	
 	@Override
     public void onCreate(Bundle savedInstanceState)
 		{    		
 
 
-			super.onCreate(savedInstanceState); 
+		super.onCreate(savedInstanceState);
+			 
 			setContentView(R.layout.activity_main);
 			map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-	
-			//Dummy location for testing purposes
-			LatLng position = new LatLng(40.807429, -73.964437);
-			map.addMarker(new MarkerOptions().position(position).title("You are here").icon(BitmapDescriptorFactory.fromResource(R.drawable.toilet)));
-			Variables.curr_lat = 40.807429;
-			Variables.curr_lng = -73.964437;
-			if(savedInstanceState != null)
-				  {
-					    	checked_address = savedInstanceState.getBoolean(CHECKED_ADDRESS, false);
-					    	checked_gps = savedInstanceState.getBoolean(CHECKED_GPS, false);
-					    	FindNearby findnearby = new FindNearby();
-					    	findnearby.execute(Variables.curr_lat, Variables.curr_lng);
-				  }
-			
-			
-		    LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-		    LocationListener loclist = new myLocationListener();
-		    
-			isGPSEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-	        isNetworkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);	
-	    if (isNetworkEnabled) {
-                lm.requestLocationUpdates(
-                        LocationManager.NETWORK_PROVIDER,
-                        6000,
-                        100, loclist);
-                Log.d("Network", "Network");}
-	        else if (isNetworkEnabled) {
-                lm.requestLocationUpdates(
-                        LocationManager.NETWORK_PROVIDER,
-                        6000,
-                        100, loclist);
-                Log.d("Network", "Network");}			
-			else{
-				if(checked_gps == false){
-					gpsSettings();
-					
-					//for emulator bc can't geolocate
-					FindNearby findnearby = new FindNearby();
-					findnearby.execute(Variables.curr_lat, Variables.curr_lng);
-					checked_gps = true;
-				}else{
-				FindNearby findnearby = new FindNearby();
-				findnearby.execute(Variables.curr_lat, Variables.curr_lng);;	
-				}
-			}
-				
-			
+			Log.i("mapFrag", "mapfrag");
+			Log.i("Enter onCreate", "onCreate");
 
+			
+			if(savedInstanceState != null)
+			  {
+						/* 
+						 * checked_address -- The 'would you like to add this location' does not appear during onRestart
+						 * checked_gps -- The 'turn on location services' message does not appear during onRestart
+						 * FindNearby displays bathrooms within preference distances
+						 * map finds current location and sets frame
+						 */
+				Log.i("savedInstanceState", "SavedInstanceState");
 				
+				    	checked_address = savedInstanceState.getBoolean(CHECKED_ADDRESS, false);
+				    	checked_gps = savedInstanceState.getBoolean(CHECKED_GPS, false);
+				    	LatLng position = new LatLng(Variables.curr_lat, Variables.curr_lng);
+						CameraUpdate update = CameraUpdateFactory.newLatLngZoom(position, 14);
+						map.animateCamera(update);
+			  }
+			Log.i("FindLocationGPS", "FindLocationGPS");
+			FindLocationGPS();
+	
 			
 	
  
@@ -207,14 +191,13 @@ map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 	
 	@Override
 	public void onInfoWindowClick(Marker arg0) {	
-		
+		Log.i("mapInfoWindow", "InfoWindow");	
 		if(arg0.getTitle().toString().trim().compareTo("You are here") != 0)
 		{
-			Log.i("infowindowinfo", arg0.getTitle() + " " + arg0.getPosition().toString());
 			Intent i = new Intent(getApplicationContext(), ListReview.class);
 			i.putExtra("address", arg0.getTitle());
 			startActivity(i);}
-	}
+		}
 });
 
 
@@ -236,13 +219,12 @@ map.setInfoWindowAdapter(new InfoWindowAdapter(){
 		
 		
 		Locations l;
-		View v = getLayoutInflater().inflate(R.layout.custom_info_window, null);
+		View v = null;
 		if(arg0.getTitle().toString().trim().compareTo("You are here") != 0)
 		{
-			Log.i("arg0", arg0.getId());
+			v = getLayoutInflater().inflate(R.layout.custom_info_window, null);
 			l = new Locations(MarkerPlaces.places.get(arg0.getId()));
-			Log.i("Return direct", mp.places.get(arg0.getId()).getAddress());
-		Log.i("location getinfowindow", l.getAddress().toString());
+
 		
 		TextView name = (TextView) v.findViewById(R.id.getName);
 		TextView address = (TextView) v.findViewById(R.id.getAddress);
@@ -259,18 +241,15 @@ map.setInfoWindowAdapter(new InfoWindowAdapter(){
 			{
 			int last = text.length();
 			int comma = text.indexOf(",");
-			Log.i("last", Integer.toString(last));
+
 			String text1 = text.substring(0, comma+2);
-			Log.i("text1", text1);
-			Log.i("comma", Integer.toString(comma));
 			text1 += "\n"; 
 			text1 += text.substring(comma+2, last);
-			Log.i("text2", text1);
 			address.setText(text1);
 			}
 		
 		
-	
+	/*
 		if(l.getHandicapped() == true)
 			handicapped.setId(R.drawable.handicapped);
 			else
@@ -280,8 +259,9 @@ map.setInfoWindowAdapter(new InfoWindowAdapter(){
 			free.setId(R.drawable.money);
 			else
 				free.setId(R.drawable.nomoney);
-		return v;
+		*/
 		}else{
+			/*
 			TextView title = (TextView) v.findViewById(R.id.getName);
 			TextView address = (TextView) v.findViewById(R.id.getAddress);
 			RatingBar clean = (RatingBar) v.findViewById(R.id.getClean);
@@ -293,8 +273,9 @@ map.setInfoWindowAdapter(new InfoWindowAdapter(){
 			handicapped.clearAnimation();
 			free.clearAnimation();
 			return v;
+		*/
 		}
-	
+		return v;
 	
 		
 	}
@@ -302,7 +283,67 @@ map.setInfoWindowAdapter(new InfoWindowAdapter(){
 });
 
 }
-			 
+	
+	private boolean isOnline() {
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo ni = cm.getActiveNetworkInfo();
+	    if (ni!=null && ni.isAvailable() && ni.isConnected()) {
+	        return true;
+	    } else {
+	    	return false; 
+	    }
+	}
+	
+	private void FindLocationGPS(){
+		LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+	    LocationListener loclist = new myLocationListener();
+	    
+		isGPSEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        isNetworkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);	
+    if (isNetworkEnabled) {
+            lm.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER,
+                    6000,
+                    100, loclist);
+            Log.d("Network", "Network");}
+        else if (isGPSEnabled) {
+            lm.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    6000,
+                    100, loclist);
+            Log.d("GPS", "GPS");}			
+		else if(checked_gps == false){
+				gpsSettings();
+				checked_gps = true;
+		}	
+	}
+	
+	public void FindLocationGPS(View v){
+		LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+	    LocationListener loclist = new myLocationListener();
+	    
+		isGPSEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        isNetworkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);	
+    if (isNetworkEnabled) {
+    	lm.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER,
+                    0,
+                    0, loclist);
+
+            Log.d("Network", "Network");}
+        else if (isGPSEnabled) {
+            lm.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    0,
+                    0, loclist);
+
+            Log.d("GPS", "GPS");}			
+		else{
+			gpsSettings();
+		}
+			
+    }
+	
 
 	private void gpsSettings(){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
@@ -351,7 +392,6 @@ map.setInfoWindowAdapter(new InfoWindowAdapter(){
 */
    
 public class myLocationListener implements LocationListener{
-
  double loclist_lat;
  double loclist_lng;
 	
@@ -359,11 +399,11 @@ public class myLocationListener implements LocationListener{
     	
     	@Override
     	public void onLocationChanged(Location location) {
-            
-
-    	
+	    	Log.i("Enter Location Listener", Double.toString(loclist_lat) + " " + Double.toString(loclist_lng));
+    	Log.i("Enter Location Listener", "Enter");
     		if(location != null)
     		{
+    	    	Log.i("Enter Location Listener", "not null");
     		if((location.getLatitude() <= loclist_lat - .0001 || location.getLatitude() >= loclist_lat + .0001) &&
     				(location.getLongitude() <= loclist_lng - .0001 || location.getLongitude() >= loclist_lng + .0001)){
     		Variables.curr_lat = location.getLatitude();
@@ -375,13 +415,20 @@ public class myLocationListener implements LocationListener{
     		map.animateCamera(update);
     		loclist_lat = location.getLatitude();
     		loclist_lng = location.getLongitude();
+    		Log.i("Variables", Variables.curr_lat + " " + Variables.curr_lng);
+    		new GeoCodeLatlng().execute(Variables.curr_lat, Variables.curr_lng);
+    		
     		}
     		//also check if address changed significantly???
+    		//This will not get called because checked_address tells if the question was asked not if it were added.
+    		/*
+    		 * MARK FOR DELETION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    		 
     		if(checked_address == false)
     		{
     			new GeoCodeLatlng().execute(Variables.curr_lat, Variables.curr_lng);
     		}//end if checked_address
-    		
+    		*/
 
     	}
     	}
@@ -404,21 +451,19 @@ public class myLocationListener implements LocationListener{
     		
     	}
     	
-      
-    	
-    	
     }
 
 
 public void GPS(View v){
 	 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-     startActivity(intent);	
+     startActivity(intent);
 }
 
 
 //displays db locations on map and updates camera to point at curr location
 private void map_display() throws IOException{
-	Log.i("map_display", "1");
+	
+	
 	List<Locations> l = new ArrayList<Locations>();
 	double lat;
 	double longitude;
@@ -427,8 +472,8 @@ private void map_display() throws IOException{
 			CameraUpdate update = CameraUpdateFactory.newLatLngZoom(position, 14);
 			map.animateCamera(update);
 			
-		FindNearby getfromserver = new FindNearby();
-		getfromserver.execute(Variables.curr_lat, Variables.curr_lng);			
+		FindNearby findnearby = new FindNearby();
+		findnearby.execute(Variables.curr_lat, Variables.curr_lng);			
 	}
 	
 
@@ -448,6 +493,9 @@ nosuchaddress.create();
 nosuchaddress.show();
 }
 
+/*
+ * Automatically asks if the current location should be added
+ */
 
 private void add_location_question() throws IOException{
 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -460,8 +508,12 @@ alertDialogBuilder
 
 	public void onClick(DialogInterface dialog,int id) {
 	//if clicked send lat, lng, and addr to get name of place and more specific info
-        CheckAddressExist checkaddressexist = new CheckAddressExist();
+     if(Variables.curr_addr != null){
+		CheckAddressExist checkaddressexist = new CheckAddressExist();
         checkaddressexist.execute(Variables.curr_addr);
+     }else{
+ 		GPSOffCurrLocation();
+     }
 	}
   })  
   .setNegativeButton("No",new DialogInterface.OnClickListener() {
@@ -480,39 +532,51 @@ alertDialogBuilder.show();
 
 
 
+@Override
+public void onSaveInstanceState(Bundle savedInstanceState) {
+    //Save the user's current state
+    super.onSaveInstanceState(savedInstanceState);
+    savedInstanceState.putBoolean(CHECKED_ADDRESS, checked_address);
+    savedInstanceState.putBoolean(CHECKED_GPS, checked_gps);
+    savedInstanceState.putBoolean(CHECKED_LOCATION, checked_location);
+}
 
+
+
+
+@Override
+public void onResume(){
+super.onResume();
+Log.i("Enter onResume", "onResume");
+
+Log.i("onResume", "onResume");
+if(Variables.LOCKED == false){
+	Variables.LOCKED = true;
+FindNearby findnearby = new FindNearby();
+findnearby.execute(Variables.curr_lat, Variables.curr_lng);
+}
+}
+@Override
+public void onRestart(){
+	super.onRestart();
+}
 
 @Override
 public void onPause(){
 super.onPause();
-Log.i("onpause()", "++ ON PAUSE ++");
 }
 
 @Override
 public void onStop(){
 super.onStop();
-Log.i("onStop()", "++ ON STOP ++");
 }
 
 
 
-@Override
-public void onSaveInstanceState(Bundle savedInstanceState) {
-    //Save the user's current game state
-	Log.i("save", savedInstanceState.toString());
-    savedInstanceState.putBoolean(CHECKED_ADDRESS, checked_address);
-    savedInstanceState.putBoolean(CHECKED_GPS, checked_gps);
-    savedInstanceState.putBoolean(CHECKED_LOCATION, checked_location);
-    // Always call the superclass so it can save the view hierarchy state
-    
-    Log.i("save", savedInstanceState.toString());
-    super.onSaveInstanceState(savedInstanceState);
-}
 
 /*
  *Menu builder and menu click settings 
  */
-
 public boolean onCreateOptionsMenu(Menu menu) {
 	  MenuInflater inflater = getMenuInflater();
 	  inflater.inflate(R.menu.mainmenu, menu);
@@ -520,9 +584,6 @@ public boolean onCreateOptionsMenu(Menu menu) {
 }
 
 
-
-
-	
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		  // We have only one menu option
@@ -531,7 +592,7 @@ public boolean onCreateOptionsMenu(Menu menu) {
 		    Intent i = new Intent(this, Preferences.class);
 		    startActivity(i);
 		    // Some feedback to the user
-		    Toast.makeText(this, "Enter default location and search parameters.",
+		    Toast.makeText(this, "Enter search parameters.",
 		      Toast.LENGTH_LONG).show();
 		    break;
 		  case R.id.exit:
@@ -542,23 +603,34 @@ public boolean onCreateOptionsMenu(Menu menu) {
 
 
 
-
+/*
+ * Manually add the current location
+ * GodCodes address and then checks address before showing review page to user
+ */
+	
 public void AddCurrentLocation(View v){
-	if(Variables.curr_addr != null){
+//	if(Variables.curr_addr != ""){
 CheckAddressExist checkaddressexist = new CheckAddressExist();
 checkaddressexist.execute(Variables.curr_addr);
+//	}
+//	else{
+//		GPSOffCurrLocation();
+//	}
+
 	}
-	else{
-		nosuchaddress(Variables.curr_addr);
-	}
-	}
+
+/*
+ * Manually add a location from anywhere
+ * Follows similar route as AddCurrentLocation
+ * Goes to GeocodeAddress before adding it
+ */
 
 public void addAnotherLocation(View v){
 	
 	AlertDialog.Builder addlocationform = new AlertDialog.Builder(this);
 	LayoutInflater inflater = getLayoutInflater();
 	addlocationform.setMessage("Please enter a location to search for: ");
-	addlocationform.setView(inflater.inflate(R.layout.custom_alert_dialog, null)).setPositiveButton("Review", new OnClickListener() {
+	addlocationform.setView(inflater.inflate(R.layout.custom_alert_dialog, null)).setPositiveButton("Set", new OnClickListener() {
 		
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
@@ -568,10 +640,8 @@ public void addAnotherLocation(View v){
 			String search_address = putaddress.getText().toString();
 			if(search_address.isEmpty() || search_address == null)
 				{dialog.cancel();}
-			Log.i("search address", search_address);
 			GeoCodeAddress geocode = new GeoCodeAddress();
-			geocode.execute(search_address, "NOT");
-			Log.i("search address", search_address);
+			geocode.execute(search_address, GPS_OFF);
 
 		}
 	})
@@ -587,6 +657,42 @@ public void addAnotherLocation(View v){
 	addlocationform.show();	
 	
 }
+
+public void connectToNetwork(){
+	
+ Log.i("connectToNetwork", "connectToNetwork");
+	AlertDialog.Builder connectToNetwork = new AlertDialog.Builder(this);
+	
+ Log.i("connectToNetwork", "connectToNetwork");
+    connectToNetwork.setTitle("No Network Connectivity");
+	
+ Log.i("connectToNetwork", "connectToNetwork");
+ 
+	connectToNetwork.setMessage("This application does not work without internet.  Please connect to the internet or quit.");
+	
+ Log.i("connectToNetwork", "connectToNetwork");
+	connectToNetwork.setPositiveButton("go to network settings", new DialogInterface.OnClickListener() {
+		
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			 Log.i("connectToNetwork", "connectToNetwork");
+			Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+			startActivity(intent);
+		}
+	}).setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			 Log.i("connectToNetwork", "connectToNetwork");
+			dialog.cancel();
+		}
+	});
+	 Log.i("connectToNetwork", "connectToNetwork");
+	connectToNetwork.create();
+	 Log.i("connectToNetwork", "connectToNetwork");
+	connectToNetwork.show();
+	 Log.i("connectToNetwork", "connectToNetwork");
+	
+	}
 
 public void Refresh(View v){
 	FindNearby findnearby = new FindNearby();
@@ -614,10 +720,9 @@ public void GPSOffCurrLocation(){
 			String search_address = putaddress.getText().toString();
 			if(search_address.isEmpty() || search_address == null)
 				{dialog.cancel();}
-			Log.i("search address", search_address);
 			GeoCodeAddress geocode = new GeoCodeAddress();
 			geocode.execute(search_address, GPS_OFF);
-			Log.i("search address", search_address);
+			
 		
 		}
 	})
@@ -644,7 +749,9 @@ public void GPSOffCurrLocation(){
 
 
 
-
+/*
+ * Grabs the shared preferences before updating markers on screen
+ */
 
 class FindNearby extends AsyncTask<Double, Void, JSONArray>
 {
@@ -652,13 +759,13 @@ class FindNearby extends AsyncTask<Double, Void, JSONArray>
 
 	@Override
 	protected JSONArray doInBackground(Double...params) {
-		
-	
+		Log.i("Enter findnearby", "findnearby");
 	//	StringBuilder builder = new StringBuilder();
 		final String uri = INTERNET + "/find_nearbypref.php?";
-		
 		prefs = PreferenceManager.getDefaultSharedPreferences(c);
-		String location_pref = prefs.getString("LOCATION", "0");
+		
+
+	//	String location_pref = prefs.getString("LOCATION", "0");
 
 		String dist_pref = prefs.getString("RADIUS", "100");
 		double dist;
@@ -667,13 +774,11 @@ class FindNearby extends AsyncTask<Double, Void, JSONArray>
 			dist = .25;
 		else{
 		int dist_int = Integer.parseInt(dist_pref);
-		Log.i("dist_pref", dist_pref);
 		dist = dist_int/100.0;
-		Log.i("dist", Double.toString(dist));
 		}
 		
 		int rating_int = 0;
-		String rating_string = prefs.getString("RATINGS", "0");
+		String rating_string = prefs.getString("RATING", "0");
 		if(rating_string.compareTo("") == 0){
 			rating_int = 0;
 		}else{
@@ -681,6 +786,9 @@ class FindNearby extends AsyncTask<Double, Void, JSONArray>
 		}
 		
 		
+		/*
+		 * Send currlatlng and dist to find minlatlng maxlatlng
+		 */
 		
 		HashMap bound_latlng = new HashMap<String, Double>();
 		bound_latlng = boundingCoordinates(dist, params[0], params[1]);
@@ -694,8 +802,7 @@ class FindNearby extends AsyncTask<Double, Void, JSONArray>
 		String maxlat = latlngdb.latDb(maxLat);
 		String maxlng = latlngdb.lngDb(maxLng);
 		
-		
-		Log.i("minmaxlatlng", minlat + " " + maxlat  + " " + minlng + " " +  maxlng);
+		//Grab locations which fit inside radius and rating parameters
 		
         HttpClient client = new DefaultHttpClient();
         String url = uri + "&min_lat=" + minlat + "&max_lat=" + maxlat + 
@@ -729,7 +836,6 @@ class FindNearby extends AsyncTask<Double, Void, JSONArray>
                     }//end while
    
                        JSONArray jsonarray = new JSONArray(builder.toString());
-                       Log.i("findNEARBY jsonarray", jsonarray.toString());
                      return jsonarray;
                      
                   
@@ -746,7 +852,13 @@ class FindNearby extends AsyncTask<Double, Void, JSONArray>
 
 	@Override
 	protected void onPostExecute(JSONArray jsonarray) {
+		
+		//put locations on map after clearing map.  Also add markers
+		
 		mp = new MarkerPlaces();
+		mp.places.clear();
+		map.clear();
+		map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 		
 		 try {
 		super.onPostExecute(jsonarray);
@@ -766,17 +878,13 @@ class FindNearby extends AsyncTask<Double, Void, JSONArray>
 			double longitude = latlngdb.lngFromDb(json.getString("longitude"));
 			position = new LatLng(latitude, longitude);
 			
-		Log.i("jsonobject", json.toString());
      	l.setAddress(json.getString("address"));
         l.setName(json.getString("name"));
         l.setPub(Boolean.parseBoolean(json.getString("free")));
         l.setHandicapped(Boolean.parseBoolean(json.getString("handicapped")));
         l.setClean(Float.parseFloat(json.getString("ratings")));
-        Log.i("ratings from db", json.getString("ratings"));
         l.setLongitude(longitude);
         l.setLat(latitude);
-		Log.i("latlng", Double.toString(position.latitude));
-		Log.i("latlng map", position.toString());
 
 
 			Marker marker = 
@@ -785,13 +893,17 @@ class FindNearby extends AsyncTask<Double, Void, JSONArray>
 		    .icon(BitmapDescriptorFactory.fromResource(R.drawable.toilet)));
 			marker.setVisible(true);
 
-			
+
 			Locations load_location = new Locations(l);
 			mp.storePlaces(marker.getId(), load_location);
         
 			
 			
         }//end for statement
+		LatLng position = new LatLng(Variables.curr_lat, Variables.curr_lng);
+		map.addMarker(new MarkerOptions().position(position).title("You are here")
+		.icon(BitmapDescriptorFactory.fromResource(R.drawable.toilet)));
+
         } catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -805,7 +917,9 @@ class FindNearby extends AsyncTask<Double, Void, JSONArray>
 		}
 		 checked_address = true;
 		 }
-        }
+Variables.LOCKED = false; 
+	}
+	
 	
 }
 
@@ -817,10 +931,9 @@ class FindNearby extends AsyncTask<Double, Void, JSONArray>
  * ask whether or not to store location.
  * otherwise it is considered stored in Variables.geocoded_*
  * and sent to Add_location.class
+ * Currently it is not being used when GPS is on.
  * 
  */
-
-
 
 
 class GeoCodeAddress extends AsyncTask<String, Void, JSONObject>{
@@ -835,7 +948,6 @@ class GeoCodeAddress extends AsyncTask<String, Void, JSONObject>{
 		 try {
 	        url = "http://maps.googleapis.com/maps/api/geocode/json?address=" +
 	        URLEncoder.encode(params[0], "UTF-8") + "&sensor=false";
-	       Log.i("url", url.toString());
 				
 			} catch (UnsupportedEncodingException e3) {
 				// TODO Auto-generated catch block
@@ -878,7 +990,6 @@ class GeoCodeAddress extends AsyncTask<String, Void, JSONObject>{
 	                    }//end while
 	   
 	                       JSONObject jsonobject = new JSONObject(builder.toString());
-	                       Log.i("GEO Jsonarray", jsonobject.toString());
 	                       if(jsonobject.getString("status").compareTo("OK") != 0)
 		           			{ 
 	                    	   jsonobject.put("original_addr", params[0]);
@@ -887,10 +998,8 @@ class GeoCodeAddress extends AsyncTask<String, Void, JSONObject>{
 	                       JSONArray results = jsonobject.getJSONArray("results");
 	                       JSONObject address = results.getJSONObject(0);
 	                 
-	                       Log.i("flag", FLAG);
 	                       address.put("FLAG", FLAG);
 	                      
-	                       Log.i("onPostExecute", address.toString());
 		           			
 	                       return address;}
 	        
@@ -914,34 +1023,49 @@ class GeoCodeAddress extends AsyncTask<String, Void, JSONObject>{
 		
 		
 		try {
-			Log.i("onPostExecute", address.toString());
 			if(address.has("original_addr") == true)
 			{
+				/*
+				 * Address does not exist
+				 */
 				nosuchaddress(address.getString("original_addr"));
 			}
 			else if(address.getString("FLAG").compareTo(GPS_OFF) == 0){
-	   Variables.curr_addr = address.getString("formatted_address");
-				Log.i("curr_addr", Variables.curr_addr);
+				/*
+				 * GPS is off adds current location.
+				 * Used for set location
+				 */
+				Variables.curr_addr = address.getString("formatted_address");
 				JSONObject geometry = address.getJSONObject("geometry");
 				JSONObject latlng = geometry.getJSONObject("location");
-				        Variables.curr_lat =  latlng.getDouble("lat");
-				        Variables.curr_lng = latlng.getDouble("lng");
-				     Log.i("curr latitude", Double.toString(Variables.curr_lat));
-				     
+				Variables.curr_lat =  latlng.getDouble("lat");
+				Variables.curr_lng = latlng.getDouble("lng");
+				   
+				/*
+				 * Refresh() method used here? Reconsider name     
+				 */
+				
+				LatLng position = new LatLng(Variables.curr_lat, Variables.curr_lng);
+			    map.addMarker(new MarkerOptions().position(position).title("You are here")
+			    .icon(BitmapDescriptorFactory.fromResource(R.drawable.toilet)));
+			    CameraUpdate update = CameraUpdateFactory.newLatLngZoom(position, 14);
+			    map.animateCamera(update);
 				FindNearby findnearby = new FindNearby();
 				findnearby.execute(Variables.curr_lat, Variables.curr_lng);
 				 	
 			}
    else{
+	   /*
+	    * 
+	    * Go to review location
+	    */
 			Variables.geocoded_addr = address.getString("formatted_address");
-			Log.i("curr_addr", Variables.geocoded_addr);
 			JSONObject geometry = address.getJSONObject("geometry");
 			JSONObject latlng = geometry.getJSONObject("location");
-			        Variables.geocoded_lat =  latlng.getDouble("lat");
-			        Variables.geocoded_lng = latlng.getDouble("lng");
-			     Log.i("GeoCode latitude", Double.toString(Variables.geocoded_lat));
-			     CheckAddressExist checkaddr = new CheckAddressExist();
-			     checkaddr.execute(Variables.geocoded_addr);
+			Variables.geocoded_lat =  latlng.getDouble("lat");
+			Variables.geocoded_lng = latlng.getDouble("lng");
+			CheckAddressExist checkaddr = new CheckAddressExist();
+			checkaddr.execute(Variables.geocoded_addr);
    }
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -953,6 +1077,11 @@ class GeoCodeAddress extends AsyncTask<String, Void, JSONObject>{
 
 }
 
+/*
+ * Check if the address exists -- If the address exists fills in the address section of the review form
+ * Should it fill in the name too?  People might have different names for same address.
+ * An address may also have many places in same building. 
+ */
 
 
 class CheckAddressExist extends AsyncTask<String, Void, JSONObject>{
@@ -963,14 +1092,16 @@ class CheckAddressExist extends AsyncTask<String, Void, JSONObject>{
 	protected JSONObject doInBackground(String... params) {
 		String INTERNET = Variables.get_internet_address();
 		if(params[0] == null)
-		{
-			Log.i("checkaddressis blank", "blank");}
+		{/*If blank
+		*tell user address is blank.  Or tell user address doesn't exist. Then exit
+	*/
+			Log.i("checkaddressis blank", "blank");
+			}
 			HttpClient client = new DefaultHttpClient();
 		
 	        String url = INTERNET + "/address_exist.php?address=" + URLEncoder.encode(params[0]);
 			HttpGet httpGet =  new HttpGet(url);
 	        StringBuilder builder = new StringBuilder();
-	        Log.i("check address exist", url.toString());
 	        org.apache.http.HttpResponse response = null;
 			try {
 				response = client.execute(httpGet);
@@ -998,18 +1129,15 @@ class CheckAddressExist extends AsyncTask<String, Void, JSONObject>{
 	                    }//end while
 	                    JSONArray jsonarray = new JSONArray(builder.toString());
 	                    JSONObject jsonobject = jsonarray.getJSONObject(0);
-	                    Log.i("get success", jsonobject.get("success").toString());
 	                       if(jsonobject.getString("success").compareTo("0") == 0)
 	                       {
 	                    	   
 	                    	   jsonobject.put("address", params[0]);
-	                    	   Log.i("success???", jsonobject.toString());
 	                       }
 	                       
 	                    
 
-	                 
-	                       Log.i("Jsonobject AddLocation", jsonobject.toString());
+	               
 	                
 	                       return jsonobject;
 	                }//end if
@@ -1026,28 +1154,22 @@ return null;
 protected void onPostExecute(JSONObject bathroom) {
 	// TODO Auto-generated method stub
 	super.onPostExecute(bathroom);
-	Log.i("onpostexecute", bathroom.toString());
 	Intent i = new Intent(getApplicationContext(), AddLocation.class);
 	i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	  try {
-			Log.i("onpostexecute", bathroom.toString());
     if(bathroom.has("name") == false){
-    	Log.i("not added", "not added");
      i.putExtra("address", bathroom.getString("address"));
  	 i.putExtra("name", "name");
      i.putExtra("handicapped", "handicapped");
      i.putExtra("free", "free");
     }
     else{
-    	Log.i("Added", "added");
     	i.putExtra("address", bathroom.getString("address"));
     	i.putExtra("name", bathroom.getString("name"));
     	i.putExtra("handicapped", bathroom.getString("handicapped"));
     	i.putExtra("free", bathroom.getString("free"));
     	}
-    Log.i("go to next", i.toString());
     startActivity(i);
- 
     
 	} catch (JSONException e) {
 		// TODO Auto-generated catch block
@@ -1062,9 +1184,8 @@ protected void onPostExecute(JSONObject bathroom) {
 
 /*
  * Geocodelatlng takes lat and lng and params2 could be used as a flag
- * Currently the only task to use it is from find current location
- * Everything else uses geocode address
- * 
+ * Currently the only task to use it is to set the current location from GPS
+ * At the end it sends curr_lat curr_lng to findnearby method
  */
 
 
@@ -1079,7 +1200,6 @@ class GeoCodeLatlng extends AsyncTask<Double, Void, Void>{
 		 try {
 			 	 url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" +
 					        URLEncoder.encode(params[0] + "," + params[1], "UTF-8") + "&sensor=false";
-					       Log.i("url", url.toString());
 			} catch (UnsupportedEncodingException e3) {
 				// TODO Auto-generated catch block
 				e3.printStackTrace();
@@ -1113,7 +1233,7 @@ class GeoCodeLatlng extends AsyncTask<Double, Void, Void>{
 	                    }//end while
 	   
 	                       JSONObject jsonobject = new JSONObject(builder.toString());
-	                       Log.i("latlng Jsonarray", jsonobject.toString());
+	                   
 	                       JSONArray results = jsonobject.getJSONArray("results");
 	                       JSONObject address = results.getJSONObject(0);
 	
@@ -1122,9 +1242,7 @@ class GeoCodeLatlng extends AsyncTask<Double, Void, Void>{
 	        		findnearby.execute(Variables.curr_lat, Variables.curr_lng);
 	           			
 	           			
-	           			Log.i("curr_addr", Variables.curr_addr);
-	           			     Log.i("curr_lat", Double.toString(Variables.curr_lat));
-	           			  Log.i("curr_lng", Double.toString(Variables.curr_lng));
+
 	                  
 	                }//end if
 	        
@@ -1165,7 +1283,6 @@ HashMap bounded_latlng = new HashMap<String, Double>(4);
 		maxLat = (maxLat*180)/Math.PI;
 		maxLon = (maxLon*180)/Math.PI;
 		
-		Log.i("minmaxlatlng", Double.toString(minLat) + " " + Double.toString(maxLat) + " " + Double.toString(minLon)  + " "  + Double.toString(maxLon));
 		
 		bounded_latlng.put("minLng", minLon);
 		bounded_latlng.put("minLat", minLat);

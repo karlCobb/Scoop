@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    android:background="@drawable/mirror_reviews"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/displayReview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:layout_gravity="center"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:paddingTop="30dp"
+            android:text="No Review was left"
+            android:maxLines="3"
+            android:minLines="2"
+            android:textSize="20sp" 
+            android:textColor="#000000"
+            />
+  	  <RelativeLayout
+ 	      android:layout_height="0dp"
+ 	      android:layout_width="match_parent"
+ 	      android:layout_weight="2"
+ 	      >
+        <RatingBar
+            android:id="@+id/ratingReview"
+            style="@style/toiletRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:isIndicator="true"
+            android:max="5"
+            android:numStars="5"
+ 			android:layout_centerInParent="true"
+
+               />
+      </RelativeLayout>
+      
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="25dp"
+        >     
+         
+      <ImageView 
+          android:id="@+id/handicappedImage"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+           android:paddingLeft="20dp"
+          android:src="@drawable/handicapped"
+          />
+       <ImageView 
+          android:id="@+id/freeImage"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:paddingLeft="20dp"
+          android:layout_toRightOf="@+id/handicappedImage"
+          android:src="@drawable/money"
+          />
+      </RelativeLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

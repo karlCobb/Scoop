@@ -34,4 +34,11 @@ public class MarkerPlaces {
 		return local;
 	}	
 	
+	public void clearPlaces(){
+		places.clear();
+	}
+
 }	
+
+
+

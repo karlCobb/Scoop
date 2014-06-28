@@ -73,6 +73,7 @@ public class AddLocation extends Activity{
         setContentView(R.layout.name_addr);
         Log.i("activity 2", "Start");
         Intent i = getIntent();
+        Log.i("name_intent", i.getStringExtra("address"));
         address_intent = i.getStringExtra("address");
         name_intent = i.getStringExtra("name");
         handicapped_intent = i.getStringExtra("handicapped");
@@ -83,8 +84,8 @@ public class AddLocation extends Activity{
       if(name_intent.trim().compareTo("name") != 0)
       {
           EditText name = (EditText) findViewById(R.id.PutName);
-          name.setText(name_intent);  
-      } 
+          name.setText(name_intent);
+      }
       
       EditText review = (EditText) findViewById(R.id.review);
    
@@ -94,7 +95,7 @@ public class AddLocation extends Activity{
 		@Override
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 			TextView counter = (TextView) findViewById(R.id.counter);
-			counter.setText(Integer.toString(300-s.length()) + " characters free");
+			counter.setText(Integer.toString(300-s.length()));
 		}
 		
 		@Override
@@ -119,30 +120,37 @@ public class AddLocation extends Activity{
 public void Cancel(View v){
 	finish();
 }
+
 	
 	
 public void save_location(View v) throws IOException{
    EditText name = (EditText) findViewById(R.id.PutName);
 String name_db = name.getText().toString();
-if(name.getText().toString().isEmpty() == false)
+if(name_db.compareTo("") != 0)
 {
+	String lat = "";
+	String lng = "";
 	Log.i("save location", "clicked");
-    EditText address = (EditText) findViewById(R.id.PutAddress);
+   EditText address = (EditText) findViewById(R.id.PutAddress);
 	String address_db = address.getText().toString();
 	LatlngDbConversion latlngdb = new LatlngDbConversion();
-   	if(address_intent.compareTo(Variables.curr_addr) == 0)
-{  			latitude = Variables.curr_lat;
-   			longitude = Variables.curr_lng;
+	Log.i("Variables", "curr_addr " + Variables.curr_addr + " geocoded " + Variables.geocoded_addr + " " + Double.toString(Variables.geocoded_lat) + " " + Double.toString(Variables.geocoded_lng) + " address " + address_intent);
+   //	if(Variables.curr_addr.compareTo("") == 0)
+   	//	Variables.curr_addr = "other";
+	if(address_intent.compareTo(Variables.curr_addr) == 0)
+{  		Log.i("curr", "curr" );		
+   		lat = latlngdb.latDb(Variables.curr_lat);
+	lng = latlngdb.lngDb(Variables.curr_lng);
    			Log.i("currlatlng", Double.toString(longitude) + " " + Double.toString(latitude));
 }
-   	else{
-    latitude = Variables.geocoded_lat;
-    longitude = Variables.geocoded_lng;
+   	else if(address_intent.compareTo(Variables.geocoded_addr) == 0){
+   		Log.i("geocoded", "geocoded" );
+   		lat = latlngdb.latDb(Variables.geocoded_lat);
+   		lng = latlngdb.lngDb(Variables.geocoded_lng);
     Log.i("geocodeedlatlng", Double.toString(longitude) + " " + Double.toString(latitude));
    	}
 
-	String lat = latlngdb.latDb(latitude);
-	String lng = latlngdb.lngDb(longitude);
+
 
 
 	CheckBox free = (CheckBox) findViewById(R.id.free);
@@ -158,7 +166,7 @@ if(name.getText().toString().isEmpty() == false)
 	
 	
 	ContactServer contact = new ContactServer();
-	contact.execute(INTERNET + "/create_location.php?", name_db, free_val, handicapped_val, review_val, clean_val,
+	contact.execute(INTERNET, name_db, free_val, handicapped_val, review_val, clean_val,
 			lat, lng);
 
 }
@@ -240,7 +248,7 @@ class ContactServer extends AsyncTask<String, Void, String>
 		nameValuePairs.add(new BasicNameValuePair("ratings", params[5]));
 		nameValuePairs.add(new BasicNameValuePair("latitude", params[6]));
 		nameValuePairs.add(new BasicNameValuePair("longitude", params[7]));
-		  httppost = new HttpPost(params[0]);
+		  httppost = new HttpPost(params[0] + "/create_location.php?");
 		  HttpEntity entity = null;
 		try {
 			entity = new UrlEncodedFormEntity(nameValuePairs);
@@ -259,7 +267,7 @@ class ContactServer extends AsyncTask<String, Void, String>
 			nameValuePairs.add(new BasicNameValuePair("handicapped", params[3]));
 			nameValuePairs.add(new BasicNameValuePair("reviews", params[4]));
 			nameValuePairs.add(new BasicNameValuePair("ratings", params[5]));
-			  httppost = new HttpPost(INTERNET + "/create_update_location.php?");
+			  httppost = new HttpPost(params[0] + "/create_update_location.php?");
 			  HttpEntity entity = null;
 			try {
 				entity = new UrlEncodedFormEntity(nameValuePairs);

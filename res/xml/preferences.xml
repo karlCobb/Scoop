@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <ListPreference 
+        android:key="RADIUS"
+        android:summary="Radius to search for locations"
+        android:title="Set Radius Bounds"
+        android:entries="@array/radiusArray"
+        android:entryValues="@array/radiusValues"     
+        />
+    
+        <ListPreference 
+        android:key="RATING"
+        android:summary="The lowest rating to include in your search"
+        android:title="Set Lowest Rating"
+        android:entries="@array/ratingArray"
+        android:entryValues="@array/ratingValues"     
+        />
+
+</PreferenceScreen>

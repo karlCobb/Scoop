@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:textSize="20sp"
+        android:textSize="40sp"
         android:text="Address" />
 
     <EditText
@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
        android:layout_height="0dp"
         android:layout_weight="1"
-        android:textSize="20sp"
+        android:textSize="40sp" 
         android:text="Name" />
 
     <EditText
@@ -46,7 +46,9 @@
         android:layout_width="wrap_content"
        android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="Free" />
+        android:text="Free" 
+         android:textSize="40sp" 
+         />
 
     <CheckBox
         android:id="@+id/handicapped"
@@ -54,7 +56,8 @@
        android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_below="@+id/free"
-        android:text="Handicap accessible" />
+        android:text="Handicap accessible" 
+         android:textSize="40sp" />
 
     <TextView
         android:id="@+id/textView4"
@@ -62,7 +65,7 @@
        android:layout_height="0dp"
         android:layout_weight="1"
         android:text="Cleanliness Rating: "
-        android:textSize="30px" />
+        android:textSize="40sp" />
 
     <RatingBar
         android:id="@+id/cleanrating"
@@ -74,13 +77,31 @@
        style="@style/toiletRatingBar"
     />
        
-    <TextView
+ 
+            <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:orientation="horizontal" >
+      
+      <TextView
         android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-       android:layout_height="0dp"
-        android:layout_weight="1"
-        android:textSize="20sp"
-        android:text="Please write a short review:" />
+        android:layout_width="0dp"
+       android:layout_height="wrap_content"
+        android:layout_weight="8"
+        android:textSize="40sp"
+        android:text="Write a 600 review:" />
+	
+      <TextView 
+          android:id="@+id/counter"
+        android:layout_width="0dp"
+       android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:textSize="40sp"
+        android:text="300"
+          />
+      
+</LinearLayout>
 
     <EditText
         android:id="@+id/review"

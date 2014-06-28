@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">mapmapagain</string>
+    <string name="app_name">The Scoop</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_listreview">listreview</string>
     <string name="title_activity_list_review">ListReview</string>
+    <string name="title_activity_splash_screen">SplashScreen</string>
+    <string name="SetLocation">Set location</string> 
+    <string name="AddCurrentLocation">Add current location</string>
+    <string name="FindCurrentLocation">Find current location</string>    
+    
 
 </resources>
